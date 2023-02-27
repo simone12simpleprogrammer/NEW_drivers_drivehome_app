@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:drivers_app/assistants/assistant_methods.dart';
 import 'package:drivers_app/push_notifications/notification_repository.dart';
-import 'package:drivers_app/push_notifications/push_notification_system.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
@@ -140,10 +138,10 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
           zoomControlsEnabled: true,
           initialCameraPosition: _kGooglePlex,
           minMaxZoomPreference: const MinMaxZoomPreference(12, 20),
-          onMapCreated: (GoogleMapController controller1)
+          onMapCreated: (GoogleMapController controller)
           {
-            _controllerGoogleMap.complete(controller1);
-            newGoogleMapController = controller1;
+            _controllerGoogleMap.complete(controller);
+            newGoogleMapController = controller;
 
             //riga che chiama metodo per impostare la mappa NERA!
             blackThemeGoogleMap(newGoogleMapController);

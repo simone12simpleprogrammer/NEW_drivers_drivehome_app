@@ -19,12 +19,18 @@ class DocumentsUpdatingScreen extends StatefulWidget {
 class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
   XFile? frontLicence;
   XFile? retroLicence;
+  XFile? frontID;
+  XFile? retroID;
 
   UploadTask? uploadTaskFront;
   UploadTask? uploadTaskBack;
+  UploadTask? uploadTaskIDFront;
+  UploadTask? uploadTaskIDBack;
 
   String? downloadURL1;
   String? downloadURL2;
+  String? downloadURL3;
+  String? downloadURL4;
 
   DatabaseReference driverRef = FirebaseDatabase.instance.ref()
       .child("drivers")
@@ -43,6 +49,14 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
       } else if (type == "retro") {
         setState(() {
           retroLicence = img;
+        });
+      } else if (type == "IDfront") {
+        setState(() {
+          frontID = img;
+        });
+      } else if (type == "IDretro") {
+        setState(() {
+          retroID = img;
         });
       }
     } catch (err) {
@@ -173,12 +187,12 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
               ),
 
               const SizedBox(
-                height: 20,
+                height: 15,
               ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               const Text("Retro patente",style: TextStyle(color: Colors.white,fontSize: 20),),
-              const SizedBox(width: 55,),
+              const SizedBox(width: 68,),
               ElevatedButton(
                 onPressed: () {
                   myAlert("Carica retro", "retro");
@@ -205,13 +219,79 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
               ],
           ),
 
+              const SizedBox(
+                height: 15,
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  const Text("Fronte carta d'identità",style: TextStyle(color: Colors.white,fontSize: 18),),
+                  const SizedBox(width: 10,),
+                  ElevatedButton(
+                    onPressed: () {
+                      myAlert("Carica fronte", "IDfront");
+                    },
+                    child: const Text('CARICA'),
+                  ),
+
+                  //if image not null show the image
+                  // if image null show text
+                  frontID != null ?
+                  Padding(padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        //to show image, you type like this.
+                        File(frontID!.path),
+                        fit: BoxFit.cover,
+                        width: 40,
+                        height: 35,
+                      ),
+                    ),
+                  )
+                      : const Text(""),
+                ],
+              ),
+
+              const SizedBox(
+                height: 15,
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  const Text("Retro carta d'identità",style: TextStyle(color: Colors.white,fontSize: 18),),
+                  const SizedBox(width: 20,),
+                  ElevatedButton(
+                    onPressed: () {
+                      myAlert("Carica retro", "IDretro");
+                    },
+                    child: const Text('CARICA'),
+                  ),
+
+                  //if image not null show the image
+                  // if image null show text
+                  retroID != null ?
+                  Padding(padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        //to show image, you type like this.
+                        File(retroID!.path),
+                        fit: BoxFit.cover,
+                        width: 40,
+                        height: 35,
+                      ),
+                    ),
+                  )
+                      : const Text(""),
+                ],
+              ),
+
               const SizedBox(height: 50,),
               const Divider(height: 0.5,thickness: 0.5,color: Colors.grey,),
               const SizedBox(height:50,),
 
               ElevatedButton(
                 onPressed: () async {
-                  if (frontLicence != null && retroLicence != null) {
+                  if (frontLicence != null && retroLicence != null && frontID!= null && retroID != null) {
                     showDialog(
                       context: context,
                       barrierDismissible: false,
@@ -220,7 +300,7 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
 
                     await uploadDocumentOnStorage();
 
-                    if(downloadURL1 != null && downloadURL2 != null) {
+                    if(downloadURL1 != null && downloadURL2 != null && downloadURL3 != null && downloadURL4 != null) {
 
                       FirebaseDatabase.instance.ref()
                           .child("drivers")
@@ -254,23 +334,38 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
     // Create a storage reference from our app
     final storageRef = FirebaseStorage.instance.ref();
 
-    // Create a reference to "currentFirebaseUser/front.jpg" patente
+    // Create a reference to "currentFirebaseUser/frontLicence.jpg"
     final frontRef = storageRef.child(
         "drivers/${currentFirebaseUser!.email}/frontLicence.jpg");
 
-    // Create a reference to "Pippo/back.jpg"
+    // Create a reference to "currentFirebaseUser/backLicence.jpg"
     final backRef = storageRef.child(
         "drivers/${currentFirebaseUser!.email}/backLicence.jpg");
 
-    // Upload the file to the path "Pippo/front.jpg"
+    // Create a reference to "currentFirebaseUser/frontID.jpg"
+    final frontIDRef = storageRef.child(
+        "drivers/${currentFirebaseUser!.email}/frontID.jpg");
 
+    // Create a reference to "currentFirebaseUser/backID.jpg"
+    final backIDRef = storageRef.child(
+        "drivers/${currentFirebaseUser!.email}/backID.jpg");
+
+
+    // Upload the file to the paths
     uploadTaskFront = frontRef.putFile(File(frontLicence!.path));
     downloadURL1 = await (await uploadTaskFront)!.ref.getDownloadURL();
 
-
-    // Upload the file to the path "Pippo/back.jpg"
     uploadTaskBack = backRef.putFile(File(retroLicence!.path));
     downloadURL2 = await (await uploadTaskBack)!.ref.getDownloadURL();
+
+    uploadTaskIDFront = frontIDRef.putFile(File(frontID!.path));
+    downloadURL3 = await (await uploadTaskIDFront)!.ref.getDownloadURL();
+
+    uploadTaskIDBack = backIDRef.putFile(File(retroID!.path));
+    downloadURL4 = await (await uploadTaskIDBack)!.ref.getDownloadURL();
+
+
+
     print("QUESTO è IL DOWNDLOAD URL ::: $downloadURL2 --- $downloadURL1");
   }
 

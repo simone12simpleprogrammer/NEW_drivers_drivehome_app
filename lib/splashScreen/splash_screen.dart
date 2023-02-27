@@ -33,19 +33,42 @@ class _MySplashScreenState extends State<MySplashScreen>
   LocationPermission? _locationPermission;
 
   startTimer(){
-    Timer(const Duration(seconds: 3),()async
-    {
+    Timer(const Duration(seconds: 3),()
+    async {
       if(fAuth.currentUser != null && fAuth.currentUser!.emailVerified )
       {
         currentFirebaseUser = fAuth.currentUser;
 
+        String? resp;
+        await FirebaseDatabase.instance.ref()
+            .child("drivers")
+            .child(currentFirebaseUser!.uid)
+            .child("hasDriverUploadedDocuments")
+            .once()
+            .then((snapData) {
+
+          if (snapData.snapshot.value != null) {
+            print("Dal database mi dicono che il valore è : ${snapData.snapshot.value}");
+            setState(() {
+              resp = snapData.snapshot.value.toString();
+            });
+          }
+        });
+
+        setState(() {
+          hasDriverUploadedFile = resp;
+        });
+
         print("Dal database mi dicono che il valore è : $hasDriverUploadedFile");
 
-        if(hasDriverUploadedFile == "true") {
+        if(hasDriverUploadedFile == "true"){
+          print("sono dentro");
           Navigator.push(context, MaterialPageRoute(builder: (c) => MainScreen()));
+
         }
         else
         {
+          print("sono qui");
           Navigator.push(context, MaterialPageRoute(builder: (c) => DocumentsUpdatingScreen()));
         }
 
@@ -58,18 +81,10 @@ class _MySplashScreenState extends State<MySplashScreen>
     });
   }
 
-  controlIfDriverHasUploadedDocuments() async {
-    await FirebaseDatabase.instance.ref()
-        .child("drivers")
-        .child(currentFirebaseUser!.uid)
-        .child("hasDriverUploadedDocuments")
-        .once()
-        .then((snapData) {
+  controlIfDriverHasUploadedDocuments(){
 
-      if (snapData.snapshot.value != null) {
-        hasDriverUploadedFile = snapData.snapshot.value.toString();
-      }
-    });
+
+
   }
 
   checkIfLocationPermissionAllowed() async
@@ -92,9 +107,7 @@ class _MySplashScreenState extends State<MySplashScreen>
   @override
   void initState() {
     super.initState();
-
     checkIfLocationPermissionAllowed();
-    controlIfDriverHasUploadedDocuments();
     startTimer();
   }
 

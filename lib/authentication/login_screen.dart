@@ -67,6 +67,9 @@ class _LoginScreenState extends State<LoginScreen>
             final snap = driverKey.snapshot;
             if (snap.value != null) {
               currentFirebaseUser = firebaseUser;
+              setState(() {
+                isDriverActive = true;
+              });
               Navigator.push(context,
                   MaterialPageRoute(builder: (c) => const MySplashScreen()));
             }

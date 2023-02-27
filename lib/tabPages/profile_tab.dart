@@ -36,7 +36,7 @@ class _ProfileTabPageState extends State<ProfileTabPage>
 
             //name
             Text(
-              onlineDriverData.name!,
+              onlineDriverData.name!,textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 60.0,
                 color: Colors.white,
@@ -112,17 +112,19 @@ class _ProfileTabPageState extends State<ProfileTabPage>
             ElevatedButton(
               onPressed:()
               {
-                FirebaseDatabase.instance.ref()
+                DatabaseReference ref = FirebaseDatabase.instance.ref()
                     .child("drivers")
                     .child(currentFirebaseUser!.uid)
-                    .child("newRideStatus")
-                    .set("idle");
+                    .child("newRideStatus");
 
-                fAuth.signOut();
-                Navigator.push(context,MaterialPageRoute(builder: (c)=> const MySplashScreen()));
+                      Geofire.removeLocation(currentFirebaseUser!.uid);
+                      ref.set("idle");
+                      fAuth.signOut();
+                      Navigator.push(context, MaterialPageRoute(builder: (c) => const MySplashScreen()));
+
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.red,
+                backgroundColor: Colors.red,
               ),
               child: const Text(
                 "LogOut",
@@ -176,14 +178,12 @@ class _ProfileTabPageState extends State<ProfileTabPage>
         .child("drivers")
         .child(currentFirebaseUser!.uid)
         .child("newRideStatus");
+
+
     ref.onDisconnect();
     ref.remove();
     ref = null;
 
-    //Future.delayed(const Duration(milliseconds:  2000), ()
-    //{
 
-    //SystemNavigator.pop();
-    //});
   }
 }

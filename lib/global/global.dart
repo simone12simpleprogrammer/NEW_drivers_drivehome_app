@@ -20,6 +20,7 @@ Position? onlineDriverCurrentPosition;
 DriverData onlineDriverData = DriverData();
 UserRideRequestInformation? userRideRequestDetails;
 String titleStarsRating = "Affidabile";
+String hasDriverUploadedFile = "";
 bool isDriverActive = true;
 Color buttonColor = Colors.grey;
 String statusText = "Clicca e Vai Online";
