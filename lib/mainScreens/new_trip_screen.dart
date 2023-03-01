@@ -58,12 +58,14 @@ class _NewTripScreenState extends State<NewTripScreen>
   LatLng? currentDriverPositionLatLng2;
   DirectionDetailsInfo? tripDirectionDetails;
   DirectionDetailsInfo? tripDirectionDetails2;
-  String? rideRequestStatus = "accepted";
+  String? rideRequestStatus;
   String durationFromOriginToDestination = "";
-
+  bool isNewTrip = true;
   bool isRequestDirectionDetails = false;
 
   StreamSubscription<DatabaseEvent>? tripRideRequestInfoStreamSubscription;
+
+
 
   locateDriverPosition() async
   {
@@ -89,7 +91,7 @@ class _NewTripScreenState extends State<NewTripScreen>
   // originLatLng = posizione corrente del driver.
   // destinationLatLng = user pickup location.
 
-  //Step 2:: Quando il drivere è già salito nella macchina del cliente
+  //Step 2:: Quando il driver è già salito nella macchina del cliente
   // originLatLng = user Pickup location => driver current Location.
   // destinationLatLng = user DropOff location.
   Future<void> drawPolyLineFromOriginToDestination(LatLng originLatLng, LatLng destinationLatLng) async  // Direction API CALL
@@ -178,7 +180,9 @@ class _NewTripScreenState extends State<NewTripScreen>
   void initState() {
     super.initState();
 
-    saveAssignedDriverDetailsToUserRideRequestAndControlStateOfTrip();
+    print("siamo dentro new TRIP SCREEN CDDDòòòòòò €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€&&&&&&&&&&&&&&&&&&&&&");
+   saveAssignedDriverDetailsToUserRideRequest();
+   controlStateOfTrip();
   }
 
   createDriverIconMarker()
@@ -330,9 +334,35 @@ class _NewTripScreenState extends State<NewTripScreen>
                   driverCurrentPosition!.longitude
               );
 
-              var userPickUpLatLng = widget.userRideRequestDetails!.originLatLng;
+              if(rideRequestStatus == "accepted") {
+                var userPickUpLatLng = widget.userRideRequestDetails!
+                    .originLatLng;
 
-              drawPolyLineFromOriginToDestination(driverCurrentLatLng, userPickUpLatLng!);
+                drawPolyLineFromOriginToDestination(driverCurrentLatLng, userPickUpLatLng!);
+              }
+              else if(rideRequestStatus == "arrived"){
+                var userDropOffLtnLng = widget.userRideRequestDetails!
+                    .destinationLatLng;
+
+                setState(() {
+                  buttonTitle = "Andiamo"; //start the trip
+                  buttonColor = Colors.lightGreen;
+                });
+
+                drawPolyLineFromOriginToDestination(driverCurrentLatLng, userDropOffLtnLng!);
+              }
+              else if(rideRequestStatus == "ontrip"){
+                var userDropOffLtnLng = widget.userRideRequestDetails!
+                    .destinationLatLng;
+
+                setState(() {
+                  buttonTitle = "Fine Corsa"; //fine della corsa
+                  buttonColor = Colors.red;
+                });
+
+                drawPolyLineFromOriginToDestination(driverCurrentLatLng, userDropOffLtnLng!);
+              }
+
 
               getDriversLocationUpdatesAtRealTime();
             },
@@ -512,6 +542,12 @@ class _NewTripScreenState extends State<NewTripScreen>
                                       .child("status")
                                       .set(rideRequestStatus); //cambio il valore di status nel database firebase
 
+                                  FirebaseDatabase.instance.ref()
+                                      .child("drivers")
+                                      .child(currentFirebaseUser!.uid)
+                                      .child("newRideStatus")
+                                      .set(rideRequestStatus);
+
                                   setState(() {
                                     buttonTitle = "Fine Corsa"; //fine della corsa
                                     buttonColor = Colors.red;
@@ -593,9 +629,6 @@ class _NewTripScreenState extends State<NewTripScreen>
                           ],
                         ),
 
-
-
-
                   ],
                 ),
               ),
@@ -606,6 +639,7 @@ class _NewTripScreenState extends State<NewTripScreen>
       ),
     );
   }
+
 
   driverAnnullaServizioInCorso()
   {
@@ -653,6 +687,12 @@ class _NewTripScreenState extends State<NewTripScreen>
         .child("ALL Ride Requests")
         .child(widget.userRideRequestDetails!.rideRequestId!)
         .child("status")
+        .set(rideRequestStatus);
+
+    FirebaseDatabase.instance.ref()
+        .child("drivers")
+        .child(currentFirebaseUser!.uid)
+        .child("newRideStatus")
         .set(rideRequestStatus);
 
     setState(() {
@@ -769,13 +809,11 @@ class _NewTripScreenState extends State<NewTripScreen>
     });
   }
 
-
-
-  saveAssignedDriverDetailsToUserRideRequestAndControlStateOfTrip()
+  controlStateOfTrip()
   {
     DatabaseReference databaseReference = FirebaseDatabase.instance.ref()
-                                          .child("ALL Ride Requests")
-                                          .child(widget.userRideRequestDetails!.rideRequestId!);
+        .child("ALL Ride Requests")
+        .child(widget.userRideRequestDetails!.rideRequestId!);
 
     tripRideRequestInfoStreamSubscription = databaseReference!.onValue.listen((eventSnap) async
     {
@@ -804,12 +842,18 @@ class _NewTripScreenState extends State<NewTripScreen>
           setOfCircle.clear();
           polyLinePositionCoordinates.clear();
           streamSubscriptionDriverLivePosition?.cancel();
-          //widget.userRideRequestDetails = null;
+          //widget.userRideRequestDetails;
         });
 
         Navigator.push(context, MaterialPageRoute(builder: (c)=> const MySplashScreen()));
       }
     });
+  }
+
+  saveAssignedDriverDetailsToUserRideRequest() async {
+    DatabaseReference databaseReference = FirebaseDatabase.instance.ref()
+                                          .child("ALL Ride Requests")
+                                          .child(widget.userRideRequestDetails!.rideRequestId!);
 
     Map driverLocationDataMap =
     {
@@ -818,12 +862,43 @@ class _NewTripScreenState extends State<NewTripScreen>
     };
     databaseReference.child("driverLocation").set(driverLocationDataMap);
 
-    databaseReference.child("status").set("accepted");
-    databaseReference.child("driverId").set(onlineDriverData.id);
-    databaseReference.child("driverName").set(onlineDriverData.name);
-    databaseReference.child("driverPhone").set(onlineDriverData.phone);
 
-    saveRideRequestIdToDriverHistory();
+    //faccio un controllo per capire se la corsa è già stata avviata e si sta riaprendo l'app perchè killata per errore
+    FirebaseDatabase.instance.ref()
+        .child("ALL Ride Requests")
+        .child(widget.userRideRequestDetails!.rideRequestId!)
+        .child("status").once()
+        .then((snap){
+
+      if(snap.snapshot.value !=null){
+        if(snap.snapshot.value != "accepted" && snap.snapshot.value != "arrived" && snap.snapshot.value != "ontrip" && snap.snapshot.value != "ended")
+        {
+          isNewTrip = false;
+        }
+        else{
+          setState(() {
+            rideRequestStatus = snap.snapshot.value.toString();
+            print("settato $rideRequestStatus");
+          });
+        }
+      }
+    });
+
+
+    print("lo stato di isNewTrip é $isNewTrip");
+    if(isNewTrip != false) {
+
+      setState(() {
+        rideRequestStatus = "accepted";
+      });
+      databaseReference.child("status").set("accepted");
+      databaseReference.child("driverId").set(onlineDriverData.id);
+      databaseReference.child("driverName").set(onlineDriverData.name);
+      databaseReference.child("driverPhone").set(onlineDriverData.phone);
+      saveRideRequestIdToDriverHistory();
+    }
+
+
   }
 
   saveRideRequestIdToDriverHistory()

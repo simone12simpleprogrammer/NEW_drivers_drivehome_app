@@ -87,7 +87,7 @@ class _MySplashScreenState extends State<MySplashScreen>
 
   }
 
-  checkIfLocationPermissionAllowed() async
+  _checkIfLocationPermissionAllowed() async
   {
     _locationPermission = await Geolocator.requestPermission();
 
@@ -107,7 +107,8 @@ class _MySplashScreenState extends State<MySplashScreen>
   @override
   void initState() {
     super.initState();
-    checkIfLocationPermissionAllowed();
+
+    _checkIfLocationPermissionAllowed();
     startTimer();
   }
 

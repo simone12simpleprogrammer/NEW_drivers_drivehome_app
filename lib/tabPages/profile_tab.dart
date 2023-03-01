@@ -149,7 +149,9 @@ class _ProfileTabPageState extends State<ProfileTabPage>
     driverCurrentPosition = pos;
 
     Geofire.initialize("activeDrivers");
-
+    if(streamSubscriptionPosition!.isPaused){
+      streamSubscriptionPosition!.resume();
+    }
 
     Geofire.setLocation(
         currentFirebaseUser!.uid,
@@ -173,6 +175,7 @@ class _ProfileTabPageState extends State<ProfileTabPage>
   driverIsOfflineNow()
   {
     Geofire.removeLocation(currentFirebaseUser!.uid);
+    streamSubscriptionPosition?.pause();
 
     DatabaseReference? ref = FirebaseDatabase.instance.ref()
         .child("drivers")

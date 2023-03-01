@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'package:drivers_app/assistants/assistant_methods.dart';
+import 'package:drivers_app/global/global.dart';
+import 'package:drivers_app/infoHandler/app_info.dart';
+import 'package:drivers_app/mainScreens/new_trip_screen.dart';
+import 'package:drivers_app/models/user_ride_request_information.dart';
 import 'package:drivers_app/push_notifications/notification_repository.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,8 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import 'package:drivers_app/global/global.dart';
+import 'package:provider/provider.dart';
 
 import '../assistants/black_theme_google_map.dart';
 
@@ -70,9 +73,8 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
       newGoogleMapController!.animateCamera(
           CameraUpdate.newCameraPosition(cameraPosition));
 
-      String humanReadableAddress = await AssistantMethods
-          .searchAddressForGeographicCoOrdinates(
-          driverCurrentPosition!, context);
+      // ignore: use_build_context_synchronously
+      String humanReadableAddress = await AssistantMethods.searchAddressForGeographicCoOrdinates(driverCurrentPosition!, context);
 
       AssistantMethods.readDriverRatings(context);
   }
@@ -103,8 +105,8 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
       }
 
     });
-    NotificationRepository().generateAndGetToken();
     NotificationRepository().initialize();
+    NotificationRepository().generateAndGetToken();
 
 
 
@@ -116,12 +118,12 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
     {
       super.initState();
 
-
       checkIfNotificationPermissionAllowed();
       readCurrentDriverInformation();
       driverIsOnlineNow();
       updateDriversLocationAtRealTime();
     }
+
 
 
 
@@ -176,15 +178,113 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
         driverCurrentPosition!.longitude
     );
 
-    DatabaseReference ref = FirebaseDatabase.instance.ref()
-        .child("drivers")
-        .child(currentFirebaseUser!.uid)
-        .child("newRideStatus");
-    ref.onValue.listen((event) { });
+    var tripsAllKeys = Provider.of<AppInfo>(context, listen: false).historyTripsKeysList;
+
+    for(String eachKey in tripsAllKeys)
+    {
+      print("questo sono i viaggi di sto trimone : $eachKey");
+    }
+
+    await rechargeTripBeforeDriverKilledApp();
 
 
   }
 
+  rechargeTripBeforeDriverKilledApp()
+  {
+    DatabaseReference ref = FirebaseDatabase.instance.ref()
+        .child("drivers")
+        .child(currentFirebaseUser!.uid)
+        .child("newRideStatus");
+    ref.once().then((snapData)  {
+
+      //1.CONTROLLARE LO STATO DEL DRIVER CON UN'IF E SE è ACCEPTED/ARRIVED/ONTRIP
+      if(snapData.snapshot.value == "accepted" || snapData.snapshot.value == "arrived" || snapData.snapshot.value == "ontrip")
+      {
+        //2.TROVA TRA LE ALL RIDE REQUEST  QUELLA ASSEGNATA A LUI CON LO STESSO STATO
+        String value = snapData.snapshot.value.toString();
+        print("lo stato della corsa lasciata precedentemente è ::: $value");
+        var tripsAllKeys = Provider.of<AppInfo>(context, listen: false).historyTripsKeysList;
+
+        for(String eachKey in tripsAllKeys)
+        {
+
+          print("siamo dentro! questa è la keyDelTrip ::: $eachKey");
+          FirebaseDatabase.instance.ref()
+              .child("ALL Ride Requests")
+              .child(eachKey)
+              .once()
+              .then((snap)
+          {
+            print("questo è il suo stato :: ${(snap.snapshot.value as Map)["status"]} !" );
+            //var eachTripsHistory = TripsHistoryModel.fromSnapshot(snap.snapshot);
+            String dateTimeFromDB;
+
+            if((snap.snapshot.value as Map)["status"] == value)
+            {
+
+              print("TROVATA corsa con stato uguale");
+              dateTimeFromDB = (snap.snapshot.value as Map)["time"];
+              var dateOfTrip = DateTime.parse(dateTimeFromDB).toLocal();
+              if(dateOfTrip.year == DateTime.now().year && dateOfTrip.month == DateTime.now().month && dateOfTrip.day == DateTime.now().day)
+              {
+                print("TROVATA corsa con DATA DI OGGI");
+
+                //3.CARICARE LA RIDE REQUEST INFORMATION
+                double originLat = double.parse((snap.snapshot.value! as Map)["origin"]["latitude"]);
+                double originLng = double.parse((snap.snapshot.value! as Map)["origin"]["longitude"]);
+                String originAddress = (snap.snapshot.value! as Map)["originAddress"];
+
+                double destinationLat = double.parse((snap.snapshot.value! as Map)["destination"]["latitude"]);
+                double destinationLng = double.parse((snap.snapshot.value! as Map)["destination"]["longitude"]);
+                String destinationAddress = (snap.snapshot.value! as Map)["destinationAddress"];
+
+                String userName = (snap.snapshot.value! as Map)["userName"];
+                String userPhone = (snap.snapshot.value! as Map)["userPhone"];
+
+                String? rideRequestId = snap.snapshot.key;
+
+                //passo tutto alla classe MODEL UserRideRequestInformation
+                UserRideRequestInformation userRideRequestDetails = UserRideRequestInformation();
+
+                userRideRequestDetails.originLatLng = LatLng(originLat, originLng);
+                userRideRequestDetails.originAddress = originAddress;
+
+                userRideRequestDetails.destinationLatLng = LatLng(destinationLat, destinationLng);
+                userRideRequestDetails.destinationAddress = destinationAddress;
+
+                userRideRequestDetails.userName = userName;
+                userRideRequestDetails.userPhone = userPhone;
+
+                userRideRequestDetails.rideRequestId = rideRequestId;
+
+
+                //4.ANDARE ALLA NEW TRIP SCREEN PER CREARE NUOVAMENTE POLYLINE E RICARICARE DATI
+                Navigator.push(context, MaterialPageRoute(builder: (c)=> NewTripScreen(
+                  userRideRequestDetails: userRideRequestDetails,
+                )));
+
+              }else{
+                print("c'è una corsa interrotta precedentemente ma non nella data odierna!");
+              }
+
+            }else
+            {
+              print("nessuna corsa interrotta precedentemente!");
+
+            }
+
+          });
+        }
+      }
+
+    });
+  }
+
+  sendTo()
+  {
+
+  }
 
   updateDriversLocationAtRealTime()
   {
@@ -196,14 +296,13 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
       {
           driverCurrentPosition = position;
 
-          if(isDriverActive == true)
-          {
+
               Geofire.setLocation(
                 currentFirebaseUser!.uid,
                 driverCurrentPosition!.latitude,
                 driverCurrentPosition!.longitude
               );
-          }
+
 
           LatLng latLng = LatLng(
               driverCurrentPosition!.latitude,
@@ -211,6 +310,7 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
           );
 
           newGoogleMapController!.animateCamera(CameraUpdate.newLatLng(latLng));
+
       });
   }
 

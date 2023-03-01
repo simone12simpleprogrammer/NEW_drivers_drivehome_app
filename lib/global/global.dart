@@ -24,3 +24,4 @@ String hasDriverUploadedFile = "";
 bool isDriverActive = true;
 Color buttonColor = Colors.grey;
 String statusText = "Clicca e Vai Online";
+
