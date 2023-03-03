@@ -182,7 +182,7 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
 
     for(String eachKey in tripsAllKeys)
     {
-      print("questo sono i viaggi di sto trimone : $eachKey");
+      print("questi sono i viaggi di sto trimone : $eachKey");
     }
 
     await rechargeTripBeforeDriverKilledApp();
@@ -281,15 +281,10 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
     });
   }
 
-  sendTo()
-  {
 
-  }
 
   updateDriversLocationAtRealTime()
   {
-
-
       streamSubscriptionPosition = Geolocator.getPositionStream()
           //.throttle(Duration(seconds: 13))
           .listen((Position position)

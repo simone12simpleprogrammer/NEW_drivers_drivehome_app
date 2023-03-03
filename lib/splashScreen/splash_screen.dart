@@ -81,11 +81,6 @@ class _MySplashScreenState extends State<MySplashScreen>
     });
   }
 
-  controlIfDriverHasUploadedDocuments(){
-
-
-
-  }
 
   _checkIfLocationPermissionAllowed() async
   {
