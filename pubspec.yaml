@@ -55,6 +55,7 @@ dependencies:
   flutter_email_sender: ^5.2.0
   image_picker: ^0.8.6+3
   firebase_storage: ^11.0.14
+  url_launcher: ^6.1.7
 
 flutter_icons:
   image_path: "images/icon-nobg.png"

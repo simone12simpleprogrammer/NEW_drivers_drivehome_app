@@ -12,6 +12,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../assistants/assistant_methods.dart';
 import '../assistants/black_theme_google_map.dart';
 import '../models/direction_datails_info.dart';
@@ -420,18 +421,24 @@ class _NewTripScreenState extends State<NewTripScreen>
                     Row(
                       children: [
                         Text(
-                        widget.userRideRequestDetails!.userName!,
+                          widget.userRideRequestDetails!.userName!,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.lightGreenAccent,
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.all(10.0),
-                          child: Icon(
-                            Icons.phone_android,
-                            color: Colors.grey,
+                        GestureDetector(
+                          onTap: () {
+                            // ignore: deprecated_member_use
+                            launch("tel://${widget.userRideRequestDetails!.userPhone!}");
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Icon(
+                              Icons.phone_android,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                       ],
