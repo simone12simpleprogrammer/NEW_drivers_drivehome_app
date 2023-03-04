@@ -676,6 +676,7 @@ class _NewTripScreenState extends State<NewTripScreen>
         setOfCircle.clear();
         polyLinePositionCoordinates.clear();
         streamSubscriptionDriverLivePosition?.cancel();
+        tripRideRequestInfoStreamSubscription?.cancel();
       });
 
       Fluttertoast.showToast(msg: "Corsa Annullata!");
@@ -830,18 +831,15 @@ class _NewTripScreenState extends State<NewTripScreen>
             .child("drivers")
             .child(currentFirebaseUser!.uid)
             .child("newRideStatus")
-            .set("idle").then((value)
-        {
+            .set("idle");
+
           FirebaseDatabase.instance.ref()
               .child("drivers")
               .child(currentFirebaseUser!.uid)
               .child("tripsHistory")
               .child(widget.userRideRequestDetails!.rideRequestId!)
               .remove();
-        }).then((value)
-        {
-          Fluttertoast.showToast(msg: "Il cliente ha annullato la corsa!");
-        });
+
 
         setState(() {
           setOfPolyline.clear();
@@ -849,9 +847,11 @@ class _NewTripScreenState extends State<NewTripScreen>
           setOfCircle.clear();
           polyLinePositionCoordinates.clear();
           streamSubscriptionDriverLivePosition?.cancel();
+          tripRideRequestInfoStreamSubscription?.cancel();
           //widget.userRideRequestDetails;
         });
 
+        Fluttertoast.showToast(msg: "Il cliente ha annullato la corsa!");
         Navigator.push(context, MaterialPageRoute(builder: (c)=> const MySplashScreen()));
       }
     });

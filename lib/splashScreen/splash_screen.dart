@@ -1,14 +1,12 @@
-import 'dart:async';
 
 import 'package:drivers_app/authentication/documents_updating_screen.dart';
 import 'package:drivers_app/authentication/login_screen.dart';
-import 'package:drivers_app/authentication/signup_screen.dart';
 import 'package:drivers_app/mainScreens/main_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../global/global.dart';
@@ -32,9 +30,7 @@ class _MySplashScreenState extends State<MySplashScreen>
   var geoLocator = Geolocator();
   LocationPermission? _locationPermission;
 
-  startTimer(){
-    Timer(const Duration(seconds: 3),()
-    async {
+  startRedirect() async {
       if(fAuth.currentUser != null && fAuth.currentUser!.emailVerified )
       {
         currentFirebaseUser = fAuth.currentUser;
@@ -63,8 +59,10 @@ class _MySplashScreenState extends State<MySplashScreen>
 
         if(hasDriverUploadedFile == "true"){
           print("sono dentro");
-          Navigator.push(context, MaterialPageRoute(builder: (c) => MainScreen()));
-
+          Future.delayed(const Duration(milliseconds: 3000),()
+          {
+            Navigator.push(context, MaterialPageRoute(builder: (c) => MainScreen()));
+          });
         }
         else
         {
@@ -77,8 +75,18 @@ class _MySplashScreenState extends State<MySplashScreen>
       {
         Navigator.push(context, MaterialPageRoute(builder: (c)=> LoginScreen()));
       }
+  }
 
+  setInitialUserPosition()
+  async {
+    Position cPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    driverCurrentPosition = cPosition;
+
+    setState((){
+      initialLatLngPosition = LatLng(driverCurrentPosition!.latitude, driverCurrentPosition!.longitude);
     });
+
   }
 
 
@@ -96,15 +104,16 @@ class _MySplashScreenState extends State<MySplashScreen>
 
         openAppSettings();
       }
+    }else{
+      setInitialUserPosition();
+      startRedirect();
     }
   }
 
   @override
   void initState() {
     super.initState();
-
     _checkIfLocationPermissionAllowed();
-    startTimer();
   }
 
   @override

@@ -28,11 +28,12 @@ class HomeTabPage extends StatefulWidget {
 
 class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClientMixin
 {
+
   final Completer<GoogleMapController> _controllerGoogleMap = Completer();
   GoogleMapController? newGoogleMapController;
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
+  CameraPosition _kGooglePlex = CameraPosition(
+    target: initialLatLngPosition!,
+    zoom: 14,
   );
 
   checkIfNotificationPermissionAllowed() async
@@ -113,24 +114,22 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
     AssistantMethods.readDriverEarnings(context);
   }
 
-    @override
-    void initState()
-    {
-      super.initState();
+  @override
+  void initState()
+  {
+    super.initState();
 
-      checkIfNotificationPermissionAllowed();
-      readCurrentDriverInformation();
-      driverIsOnlineNow();
-      updateDriversLocationAtRealTime();
-    }
-
-
+    checkIfNotificationPermissionAllowed();
+    readCurrentDriverInformation();
+    driverIsOnlineNow();
+    updateDriversLocationAtRealTime();
+  }
 
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Stack(
+    return _kGooglePlex == null ? Container(child: Center(child:Text('Caricamento mappa..', style: TextStyle(fontFamily: 'Avenir-Medium', color: Colors.grey[400]),),),) : Stack(
       children: [
         GoogleMap(
           mapType: MapType.normal,
@@ -170,7 +169,6 @@ class _HomeTabPageState extends State<HomeTabPage> with AutomaticKeepAliveClient
     driverCurrentPosition = pos;
 
     Geofire.initialize("activeDrivers");
-
 
     Geofire.setLocation(
         currentFirebaseUser!.uid,

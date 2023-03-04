@@ -5,6 +5,7 @@ import 'package:drivers_app/models/driver_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/user_ride_request_information.dart';
 
@@ -12,6 +13,7 @@ import '../models/user_ride_request_information.dart';
 
 final FirebaseAuth fAuth = FirebaseAuth.instance;
 User? currentFirebaseUser;
+LatLng? initialLatLngPosition;
 StreamSubscription<Position>? streamSubscriptionPosition;
 StreamSubscription<Position>? streamSubscriptionDriverLivePosition;
 AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
@@ -24,4 +26,5 @@ String hasDriverUploadedFile = "";
 bool isDriverActive = true;
 Color buttonColor = Colors.grey;
 String statusText = "Clicca e Vai Online";
+
 
