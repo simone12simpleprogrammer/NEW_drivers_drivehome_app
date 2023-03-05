@@ -34,7 +34,7 @@ class _ProfileTabPageState extends State<ProfileTabPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 30,),
+            const SizedBox(height:100,),
             //name
             Text(
               onlineDriverData.name!,textAlign: TextAlign.center,
@@ -133,7 +133,7 @@ class _ProfileTabPageState extends State<ProfileTabPage>
               ),
             ),
 
-            const SizedBox(height:5,),
+            const SizedBox(height: 45,),
 
             TextButton(
                 style: TextButton.styleFrom(padding: const EdgeInsets.only(top: 10),tapTargetSize: MaterialTapTargetSize.shrinkWrap),
@@ -151,6 +151,8 @@ class _ProfileTabPageState extends State<ProfileTabPage>
                         title: Text("Oh no.."),
                         content: Text("Ci dispiace perderti. \n \nVuoi davvero cancellarti?"),
                         actions: [
+
+                          const SizedBox(width: 5,),
                           ElevatedButton(
                             onPressed: () {
 
@@ -164,6 +166,18 @@ class _ProfileTabPageState extends State<ProfileTabPage>
                             style: ElevatedButton.styleFrom(backgroundColor: CupertinoColors.destructiveRed,),
                             child: const Text("Cancella il mio account",style: TextStyle(color:Colors.white),),
                           ),
+
+
+
+                          ElevatedButton(
+                            onPressed: () {
+                              // Codice da eseguire se l'utente preme "No"
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: CupertinoColors.systemGrey,),
+                            child: const Text("No",style: TextStyle(color:Colors.white),),
+                          ),
+                          const SizedBox(width: 5,),
                         ],
                         actionsAlignment: MainAxisAlignment.center,
                       );
