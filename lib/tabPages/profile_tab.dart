@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -33,7 +34,7 @@ class _ProfileTabPageState extends State<ProfileTabPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
+            const SizedBox(height: 30,),
             //name
             Text(
               onlineDriverData.name!,textAlign: TextAlign.center,
@@ -130,6 +131,45 @@ class _ProfileTabPageState extends State<ProfileTabPage>
                 "LogOut",
                 style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,),
               ),
+            ),
+
+            const SizedBox(height:5,),
+
+            TextButton(
+                style: TextButton.styleFrom(padding: const EdgeInsets.only(top: 10),tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                child: const Text(
+                  "Cancella il mio account",
+                  style:TextStyle(color: Colors.white,fontWeight: FontWeight.w100)
+                ),
+                onPressed: ()
+                {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor: CupertinoColors.systemGrey5,
+                        title: Text("Oh no.."),
+                        content: Text("Ci dispiace perderti. \n \nVuoi davvero cancellarti?"),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+
+                              //cancellazione utente
+                              var firebaseUserReference = FirebaseDatabase.instance.ref().child("drivers").child(fAuth.currentUser!.uid);
+                              firebaseUserReference.remove();
+                              Fluttertoast.showToast(msg: "Account cancellato!");
+                              Navigator.push(context, MaterialPageRoute(builder: (c)=> const MySplashScreen()));
+
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: CupertinoColors.destructiveRed,),
+                            child: const Text("Cancella il mio account",style: TextStyle(color:Colors.white),),
+                          ),
+                        ],
+                        actionsAlignment: MainAxisAlignment.center,
+                      );
+                    },
+                  );
+                }
             ),
 
 
