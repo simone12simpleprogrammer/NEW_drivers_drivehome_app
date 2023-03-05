@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:drivers_app/authentication/signup_screen.dart';
-import 'package:drivers_app/mainScreens/main_screen.dart';
 import 'package:drivers_app/splashScreen/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../global/global.dart';
-import '../widgets/progress_dialog.dart';
+import 'package:drivers_app/global/global.dart';
+import 'package:drivers_app/widgets/progress_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -171,72 +170,78 @@ class _LoginScreenState extends State<LoginScreen>
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              const SizedBox(height:30,),
 
-              Padding(
+              const SizedBox(height:30,),
+          FittedBox(
+              child:Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: Image.asset("images/logo1.png"),
               ),
+          ),
+              const SizedBox(height:3,),
 
-              const SizedBox(height:10,),
-
-              const Text(
+          const FittedBox(
+            child: Text(
                 "Accedi come Autista",
                 style : TextStyle(
                   fontSize: 24,
-                  color: Colors.grey,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
+          ),
+              const SizedBox(height:10,),
 
-              TextField(
+
+            TextField(
                 controller: emailTextEditingController,
                 keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(
-                    color: Colors.grey
+                    color: Colors.white
                 ),
                 decoration: const InputDecoration(
                   labelText: "Email",
                   hintText: "Email",
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   hintStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 10,
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 14,
                   ),
                 ),
               ),
+
 
               TextField(
                 controller: passwordTextEditingController,
                 keyboardType: TextInputType.text,
                 obscureText: true,
                 style: const TextStyle(
-                    color: Colors.grey
+                    color: Colors.white
                 ),
                 decoration: const InputDecoration(
                   labelText: "Password",
                   hintText: "Password",
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   hintStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 10,
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 14,
                   ),
                 ),
@@ -265,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen>
                 style: TextButton.styleFrom(padding: EdgeInsets.only(top: 10),tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                 child: const Text(
                   "Non hai un account? Registrati qui",
-                  style:TextStyle(color: Colors.grey),
+                  style:TextStyle(color: Colors.white),
                 ),
                 onPressed: ()
                 {
@@ -278,11 +283,10 @@ class _LoginScreenState extends State<LoginScreen>
                   style: TextButton.styleFrom(padding: EdgeInsets.only(top: 2),tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                   child: const Text(
                     "Password dimenticata?",
-                    style:TextStyle(color: Colors.grey),
+                    style:TextStyle(color: Colors.white),
                   ),
                   onPressed: () async
                   {
-                    print("QUESTO è l'inidirizzo email per mail da resettare :${emailTextEditingController!.text.trim()}");
                     await FirebaseAuth.instance.sendPasswordResetEmail(email: emailTextEditingController!.text.trim());
                     Fluttertoast.showToast(msg: "Controlla tra le email per reimpostare la password.");
                     Navigator.push(context, MaterialPageRoute(builder: (c)=> LoginScreen()));

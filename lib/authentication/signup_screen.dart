@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:async';
 
 import 'package:drivers_app/authentication/login_screen.dart';
+import 'package:drivers_app/documents/privacy_policy.dart';
 import 'package:drivers_app/models/driver_data.dart';
 import 'package:drivers_app/splashScreen/splash_screen.dart';
 import 'package:drivers_app/widgets/progress_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -180,42 +182,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               const SizedBox(height:30,),
 
-              Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Image.asset("images/logo1.png"),
+              FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Image.asset("images/logo1.png"),
+                ),
               ),
-
-              const SizedBox(height:10,),
+              const SizedBox(height:3,),
 
               const Text(
                 "Registrati come Autista",
                 style : TextStyle(
                   fontSize: 24,
-                  color: Colors.grey,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(height:10,),
 
               TextField(
                 controller: nameTextEditingController,
                 style: const TextStyle(
-                  color: Colors.grey
+                  color: Colors.white
                 ),
                 decoration: const InputDecoration(
                   labelText: "Nome e Cognome",
                   hintText: "Nome e Cognome",
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   hintStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 10,
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 14,
                   ),
                 ),
@@ -226,23 +230,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: emailTextEditingController,
                 keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(
-                    color: Colors.grey
+                    color: Colors.white
                 ),
                 decoration: const InputDecoration(
                   labelText: "Email (Valida come username)",
                   hintText: "Email",
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   hintStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 10,
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 14,
                   ),
                 ),
@@ -252,23 +256,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: phoneTextEditingController,
                 keyboardType: TextInputType.phone,
                 style: const TextStyle(
-                    color: Colors.grey
+                    color: Colors.white
                 ),
                 decoration: const InputDecoration(
                   labelText: "Telefono",
                   hintText: "Telefono",
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   hintStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 10,
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 14,
                   ),
                 ),
@@ -279,23 +283,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 keyboardType: TextInputType.text,
                 obscureText: true,
                 style: const TextStyle(
-                    color: Colors.grey
+                    color: Colors.white
                 ),
                 decoration: const InputDecoration(
                   labelText: "Password",
                   hintText: "Password",
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color:Colors.grey),
+                    borderSide: BorderSide(color:Colors.white),
                   ),
                   hintStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 10,
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.white,
                     fontSize: 14,
                   ),
                 ),
@@ -323,7 +327,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               TextButton(
                   child: const Text(
                     "Hai già un Account? Accedi Qui",
-                    style:TextStyle(color: Colors.grey),
+                    style:TextStyle(color: Colors.white),
                   ),
                   onPressed: ()
                   {
@@ -331,6 +335,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
               ),
 
+              const SizedBox(height: 25,),
+          FittedBox(
+            child:
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: const TextStyle(color: Colors.grey,fontSize: 16),
+                  children: [
+                    const TextSpan(text: 'Registrando un account, accetti i nostri '),
+                    TextSpan(
+                      text: 'Termini e condizioni\n',
+                      style: const TextStyle(color: Colors.white),
+                      recognizer: TapGestureRecognizer()..onTap = () { /* inserisci la logica dei text button qui */ },
+                    ),
+                    const TextSpan(text: ' e '),
+                    TextSpan(
+                      text: 'Informativa sulla privacy',
+                      style: const TextStyle(color: Colors.white),
+                      recognizer: TapGestureRecognizer()..onTap = () { Navigator.push(context,
+                          MaterialPageRoute(builder: (c) => PrivacyPolicy())); },
+                    ),
+                    const TextSpan(text: '. Ti informiamo che non\n condivideremo le tue informazioni personali \nal di fuori della nostra azienda.'),
+                  ],
+                ),
+              )
+          ),
             ],
           ),
         ),
