@@ -356,7 +356,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       recognizer: TapGestureRecognizer()..onTap = () { Navigator.push(context,
                           MaterialPageRoute(builder: (c) => PrivacyPolicy())); },
                     ),
-                    const TextSpan(text: '. Ti informiamo che non\n condivideremo le tue informazioni personali \nal di fuori della nostra azienda.'),
+                    const TextSpan(text: '.'),
                   ],
                 ),
               )

@@ -255,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen>
                   validateForm();
                 },
                 style:ElevatedButton.styleFrom(
-                  primary: Colors.lightGreenAccent,
+                  backgroundColor: Colors.lightGreenAccent,
                 ),
                 child: Text(
                   "ACCEDI",
@@ -287,9 +287,17 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                   onPressed: () async
                   {
-                    await FirebaseAuth.instance.sendPasswordResetEmail(email: emailTextEditingController!.text.trim());
-                    Fluttertoast.showToast(msg: "Controlla tra le email per reimpostare la password.");
-                    Navigator.push(context, MaterialPageRoute(builder: (c)=> LoginScreen()));
+                    String emailUser = emailTextEditingController.text.trim();
+                    if(emailUser.isNotEmpty) {
+                      await FirebaseAuth.instance.sendPasswordResetEmail(
+                          email: emailTextEditingController.text.trim());
+                      Fluttertoast.showToast(
+                          msg: "Controlla tra le e-mail per reimpostare la password.");
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (c) => LoginScreen()));
+                    }else{
+                      Fluttertoast.showToast(msg: "Inserire l'e-mail nel suo campo e riprovare.");
+                    }
                   }
               ),
             ],

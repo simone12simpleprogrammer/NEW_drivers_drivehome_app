@@ -69,7 +69,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                 ),
               ),
               Text(
-                "• accesso tecnico e Funzionale al Sito nessun dato viene tenuto dopo la chiusura del Browser;\n"
+                "• accesso tecnico e Funzionale all' Applicazione nessun dato viene tenuto dopo la chiusura del Browser;\n"
                     "• finalità di navigazione Evoluta o gestione dei contenuti personalizzata;\n"
                     "• finalità Statistica e di Analisi della navigazione e degli utenti.\n",
                 style : TextStyle(
