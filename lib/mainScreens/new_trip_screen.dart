@@ -850,7 +850,6 @@ class _NewTripScreenState extends State<NewTripScreen>
           tripRideRequestInfoStreamSubscription?.cancel();
           //widget.userRideRequestDetails;
         });
-
         Fluttertoast.showToast(msg: "Il cliente ha annullato la corsa!",toastLength: Toast.LENGTH_LONG);
         Navigator.push(context, MaterialPageRoute(builder: (c)=> const MySplashScreen()));
       }

@@ -97,13 +97,11 @@ class _MySplashScreenState extends State<MySplashScreen>
     if(_locationPermission == LocationPermission.denied)
     {
       _locationPermission = await Geolocator.requestPermission();
-
+    }else
       if(_locationPermission == LocationPermission.deniedForever)
-      {
-        Fluttertoast.showToast(msg: "Abbiamo bisogno della Posizone!");
-
-        openAppSettings();
-      }
+    {
+      Fluttertoast.showToast(msg: "Abbiamo bisogno della Posizone!",toastLength: Toast.LENGTH_LONG);
+      openAppSettings();
     }else{
       setInitialUserPosition();
       startRedirect();
