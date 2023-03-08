@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:drivers_app/authentication/login_screen.dart';
 import 'package:drivers_app/documents/privacy_policy.dart';
+import 'package:drivers_app/documents/terms_and_conditions.dart';
 import 'package:drivers_app/models/driver_data.dart';
 import 'package:drivers_app/splashScreen/splash_screen.dart';
 import 'package:drivers_app/widgets/progress_dialog.dart';
@@ -347,7 +348,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextSpan(
                       text: 'Termini e condizioni\n',
                       style: const TextStyle(color: Colors.white),
-                      recognizer: TapGestureRecognizer()..onTap = () { /* inserisci la logica dei text button qui */ },
+                      recognizer: TapGestureRecognizer()..onTap = () { Navigator.push(context,
+                          MaterialPageRoute(builder: (c) => TermsAndConditions())); },
                     ),
                     const TextSpan(text: ' e '),
                     TextSpan(

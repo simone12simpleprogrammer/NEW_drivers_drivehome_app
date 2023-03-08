@@ -14,10 +14,12 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text(
-          "Privacy Policy",
-          style: TextStyle(
-            color: Colors.white,
+        title: const FittedBox(
+          child:Text(
+            "Informativa sulla privacy",
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
         ),
         leading: IconButton(
