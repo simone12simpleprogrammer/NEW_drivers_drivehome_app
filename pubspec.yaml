@@ -58,7 +58,7 @@ dependencies:
   url_launcher: ^6.1.7
 
 flutter_icons:
-  image_path: "images/icon-nobg.png"
+  image_path: "images/logo.png"
   android: true
   ios: true
 
