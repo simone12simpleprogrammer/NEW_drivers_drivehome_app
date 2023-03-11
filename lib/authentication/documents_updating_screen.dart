@@ -4,6 +4,7 @@ import 'package:drivers_app/splashScreen/splash_screen.dart';
 import 'package:drivers_app/widgets/progress_dialog.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -70,7 +71,7 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor: Colors.white,
+            backgroundColor: CupertinoColors.systemGrey5,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8)),
             title: Text(description, style: const TextStyle(color: Colors.black),),
@@ -83,6 +84,8 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
                 children: [
                   const SizedBox(height: 15,),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: CupertinoColors.systemGrey,),
                     //if user click this button, user can upload image from gallery
                     onPressed: () {
                       Navigator.pop(context);
@@ -92,7 +95,7 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
                       children: const [
                         Icon(Icons.image),
                         SizedBox(width: 10,),
-                        Text('Carica da Foto'),
+                        Text('Carica da Galleria'),
                       ],
                     ),
                   ),
@@ -101,7 +104,7 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
 
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,),
+                      backgroundColor: CupertinoColors.systemGrey,),
                     //if user click this button. user can upload image from camera
                     onPressed: () {
                       Navigator.pop(context);
@@ -111,7 +114,7 @@ class _DocumentsUpdatingScreenState extends State<DocumentsUpdatingScreen> {
                       children: const [
                         Icon(Icons.camera),
                         SizedBox(width: 10,),
-                        Text('Scatta'),
+                        Text('Scatta')
                       ],
                     ),
                   ),

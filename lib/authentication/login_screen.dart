@@ -4,6 +4,7 @@ import 'package:drivers_app/authentication/signup_screen.dart';
 import 'package:drivers_app/splashScreen/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -87,41 +88,34 @@ class _LoginScreenState extends State<LoginScreen>
               context: context,
               barrierDismissible: false,
               builder: (BuildContext c) {
-                return Container(
-                  margin: const EdgeInsets.only(
-                      left: 50, right: 50, bottom: 220, top: 220),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(10.0),
-                    color: Colors.white,
-                  ),
-                  child: AlertDialog(
-                    backgroundColor: Colors.white54,
-                    title: const Text("Verifica Email", style: TextStyle(
+                return AlertDialog(
+                  backgroundColor: CupertinoColors.systemGrey5,
+                  title: Padding(
+                    padding: const EdgeInsets.only(top:15.0),
+                    child: Text("Verifica Email", style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.black),
                         textAlign: TextAlign.center),
-                    content: Text(
-                        "Devi verificare la tua email prima di accedere. /n Controlla la tua casella di posta elettronica.",
-                        style: TextStyle(color: Colors.black),
-                        textAlign: TextAlign.center),
-                    actions: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                              child: Text("OK", style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black)),
-                              onPressed: () => Navigator.pop(context),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey,)
-                          ),
-                        ],
-                      )
-
-                    ],
                   ),
+                  content: Text(
+                      "Devi verificare la tua email prima di accedere. Controlla la tua casella di posta elettronica.",
+                      style: TextStyle(color: Colors.black),
+                      textAlign: TextAlign.center),
+                  actions: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                            child: Text(
+                                "OK", style: TextStyle(fontWeight: FontWeight
+                                .bold, color: Colors.black)),
+                            onPressed: () => Navigator.pop(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: CupertinoColors.systemGrey,)
+                        ),
+                        const SizedBox(height: 15,)
+                      ],
+                    )
+                  ],
                 );
               }
           );
